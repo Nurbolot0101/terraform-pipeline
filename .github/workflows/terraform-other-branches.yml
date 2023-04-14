@@ -1,8 +1,8 @@
-name: Terraform pipeline master
+name: Terraform pipeline ohter branches
 
 on:
   push:
-    branches: ["master"]
+    branches-ignore: ["master"]
 jobs:
   terraform:
     name: 'Terraform'
@@ -33,19 +33,16 @@ jobs:
       run: |
         terraform workspace select dev
         terraform plan -input=false
-        terraform apply --auto-approve -input=false
         
     - name: Terraform plan and apply stage
       run: |
         terraform workspace select stage
         terraform plan -input=false
-        terraform apply --auto-approve -input=false
         
     - name: Terraform plan and apply prod
       run: |
         terraform workspace select prod
         terraform plan -input=false
-        terraform apply --auto-approve -input=false
       
         
     

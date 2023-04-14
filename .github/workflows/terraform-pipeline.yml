@@ -25,12 +25,6 @@ jobs:
       
     - name: Terraform Init
       run: terraform init
-      
-    - name: Terraform create workspaces
-      run: |
-        terraform workspace new prod
-        terraform workspace new stage
-        terraform workspace new dev
     
     - name: Terraform plan and apply dev
       run: |

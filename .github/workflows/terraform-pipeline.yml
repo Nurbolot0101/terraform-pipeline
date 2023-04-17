@@ -1,16 +1,14 @@
-name: Terraform pipeline master
+name: Terraform pipeline  master branch
 
 on:
   push:
     branches: ["master"]
-env:
-  AWS_REGION: "us-east-1"
 jobs:
-  terraform:
-    name: 'Terraform'
+  terraform_dev:
+    name: 'Terraform apply Dev'
     runs-on: ubuntu-latest
     steps:
-    - name: Chekout
+    - name: Chekout branch
       uses: actions/checkout@v1
     
     - name: Configure AWS credentials
@@ -18,7 +16,7 @@ jobs:
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ env.AWS_REGION }}
+        aws-region: ${{ secrets.AWS_REGION }}
         
     - name: Terraform Setup
       uses: hashicorp/setup-terraform@v1
@@ -31,13 +29,53 @@ jobs:
         terraform workspace select dev
         terraform plan -input=false
         terraform apply --auto-approve -input=false
+
+  terraform_stage:
+    name: 'Terraform apply Dev'
+    runs-on: ubuntu-latest
+    steps:
+    - name: Chekout branch
+      uses: actions/checkout@v1
+    
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
         
+    - name: Terraform Setup
+      uses: hashicorp/setup-terraform@v1
+      
+    - name: Terraform Init
+      run: terraform init
+    
     - name: Terraform plan and apply stage
       run: |
         terraform workspace select stage
         terraform plan -input=false
         terraform apply --auto-approve -input=false
+
+  terraform_prod:
+    name: 'Terraform apply Dev'
+    runs-on: ubuntu-latest
+    steps:
+    - name: Chekout branch
+      uses: actions/checkout@v1
+    
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
         
+    - name: Terraform Setup
+      uses: hashicorp/setup-terraform@v1
+      
+    - name: Terraform Init
+      run: terraform init
+      
     - name: Terraform plan and apply prod
       run: |
         terraform workspace select prod
